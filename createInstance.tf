@@ -15,30 +15,30 @@ data "aws_ami" "latest-ubuntu" {
   }
 }
 
-resource "aws_key_pair" "levelup_key" {
-  key_name   = "levelup_key"
+resource "aws_key_pair" "levelup_key2" {
+  key_name   = "levelup_key2"
   public_key = file(var.PATH_TO_PUBLIC_KEY)
 }
 
 resource "aws_instance" "DockerInstance" {
   ami           = lookup(var.AMIS, var.AWS_REGION)
   instance_type = "t2.micro"
-  key_name      = aws_key_pair.levelup_key.key_name
+  key_name      = aws_key_pair.levelup_key2.key_name
 
   tags = {
-    Name = "custom_instance"
+    Name = "custom_instance2"
   }
 
   provisioner "file" {
-    source      = "installNginx.sh"
-    destination = "/tmp/installNginx.sh"
+    source      = "installdocker_tf.sh"
+    destination = "/tmp/installdocker_tf.sh"
   }
 
   provisioner "remote-exec" {
     inline = [
-      "chmod +x /tmp/installNginx.sh",
-      "sudo sed -i -e 's/\r$//' /tmp/installNginx.sh", # Remove the spurious CR characters.
-      "sudo /tmp/installNginx.sh",
+      "chmod +x /tmp/installdocker_tf.sh",
+      "sudo sed -i -e 's/\r$//' /tmp/installdocker_tf.sh", # Remove the spurious CR characters.
+      "sudo /tmp/installdocker_tf.sh",
     ]
   }
 
